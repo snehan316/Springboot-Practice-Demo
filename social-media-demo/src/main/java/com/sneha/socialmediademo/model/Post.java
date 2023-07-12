@@ -1,9 +1,14 @@
 package com.sneha.socialmediademo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Post {
@@ -12,15 +17,20 @@ public class Post {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	
-	private int description;
+	@Size(min=10)
+	private String description;
 	
-	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JsonIgnore
+	private User user;
 
 	public Post() {
 		super();
 	}
 
-	public Post(int id, int description) {
+	
+
+	public Post(int id, String description) {
 		super();
 		this.id = id;
 		this.description = description;
@@ -34,12 +44,20 @@ public class Post {
 		this.id = id;
 	}
 
-	public int getDescription() {
+	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(int description) {
+	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@Override
