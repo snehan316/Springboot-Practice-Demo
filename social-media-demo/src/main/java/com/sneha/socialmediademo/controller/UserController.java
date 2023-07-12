@@ -1,9 +1,12 @@
 package com.sneha.socialmediademo.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +29,7 @@ public class UserController {
 	UserDAOService userDAOService;
 	
 	@GetMapping("/users")
-	public List<User> findAll(){
+	public List<User> findAllUsers(){
 		return userDAOService.findAll();
 	}
 	
@@ -38,12 +41,17 @@ public class UserController {
 	}
 	
 	@GetMapping("users/{id}")
-	public User findByID(@PathVariable int id) {
+	public EntityModel<User> findUserByID(@PathVariable int id) {
 		User user = userDAOService.findUserByID(id);
 		if(user==null) {
 			throw new UserNotFoundException("User with id:" + id + " not found");
 		}
-		return user;
+		
+		EntityModel<User> entityModel = EntityModel.of(user);
+		WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).findAllUsers());
+		entityModel.add(link.withRel("all-users"));
+		
+		return entityModel;
 	}
 	
 	@DeleteMapping("/users/{id}")
