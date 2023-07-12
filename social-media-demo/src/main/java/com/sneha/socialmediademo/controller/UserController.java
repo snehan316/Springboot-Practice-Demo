@@ -17,6 +17,8 @@ import com.sneha.socialmediademo.dao.UserDAOService;
 import com.sneha.socialmediademo.exceptions.UserNotFoundException;
 import com.sneha.socialmediademo.model.User;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class UserController {
 
@@ -29,7 +31,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/users")
-	public ResponseEntity<User> saveUser(@RequestBody User user) {
+	public ResponseEntity<User> saveUser(@Valid @RequestBody User user) {
 	    User savedUser = userDAOService.saveUser(user);
 	    URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedUser.getId()).toUri();
 		return ResponseEntity.created(location).build();
